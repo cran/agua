@@ -4,10 +4,23 @@
 \alias{h2o_train}
 \alias{h2o_train_rf}
 \alias{h2o_train_xgboost}
+\alias{h2o_train_gbm}
 \alias{h2o_train_glm}
+\alias{h2o_train_nb}
+\alias{h2o_train_mlp}
+\alias{h2o_train_rule}
+\alias{h2o_train_auto}
 \title{Model wrappers for h2o}
 \usage{
-h2o_train(x, y, model, ...)
+h2o_train(
+  x,
+  y,
+  model,
+  weights = NULL,
+  validation = NULL,
+  save_data = FALSE,
+  ...
+)
 
 h2o_train_rf(x, y, ntrees = 50, mtries = -1, min_rows = 1, ...)
 
@@ -22,19 +35,70 @@ h2o_train_xgboost(
   col_sample_rate = 1,
   min_split_improvement = 0,
   stopping_rounds = 0,
+  validation = NULL,
+  ...
+)
+
+h2o_train_gbm(
+  x,
+  y,
+  ntrees = 50,
+  max_depth = 6,
+  min_rows = 1,
+  learn_rate = 0.3,
+  sample_rate = 1,
+  col_sample_rate = 1,
+  min_split_improvement = 0,
+  stopping_rounds = 0,
   ...
 )
 
 h2o_train_glm(x, y, lambda = NULL, alpha = NULL, ...)
+
+h2o_train_nb(x, y, laplace = 0, ...)
+
+h2o_train_mlp(
+  x,
+  y,
+  hidden = 200,
+  l2 = 0,
+  hidden_dropout_ratios = 0,
+  epochs = 10,
+  activation = "Rectifier",
+  validation = NULL,
+  ...
+)
+
+h2o_train_rule(
+  x,
+  y,
+  rule_generation_ntrees = 50,
+  max_rule_length = 5,
+  lambda = NULL,
+  ...
+)
+
+h2o_train_auto(x, y, verbosity = NULL, save_data = FALSE, ...)
 }
 \arguments{
-\item{x}{A data frame of predictors}
+\item{x}{A data frame of predictors.}
 
 \item{y}{A vector of outcomes.}
 
 \item{model}{A character string for the model. Current selections are
-\code{"randomForest"}, \code{"xgboost"}, and \code{"glm"}. Use \code{\link[h2o:h2o.xgboost.available]{h2o::h2o.xgboost.available()}}
-to see if that model can be used on your OS/h2o server.}
+\code{"automl"}, \code{"randomForest"}, \code{"xgboost"}, \code{"gbm"}, \code{"glm"}, \code{"deeplearning"},
+\code{"rulefit"} and \code{"naiveBayes"}. Use \code{\link[=h2o_xgboost_available]{h2o_xgboost_available()}} to see
+if xgboost can be used on your OS/h2o server.}
+
+\item{weights}{A numeric vector of case weights.}
+
+\item{validation}{An integer between 0 and 1 specifying the \emph{proportion} of
+the data reserved as validation set. This is used by h2o for performance
+assessment and potential early stopping. Default to 0.}
+
+\item{save_data}{A logical for whether training data should be saved on
+the h2o server, set this to \code{TRUE} for AutoML models that needs to be
+re-fitted.}
 
 \item{...}{Other options to pass to the h2o model functions (e.g.,
 \code{\link[h2o:h2o.randomForest]{h2o::h2o.randomForest()}}).}
@@ -64,6 +128,28 @@ stopping_metric does not improve for k:=stopping_rounds scoring events (0 to dis
 \item{alpha}{Distribution of regularization between the L1 (Lasso) and L2 (Ridge) penalties. A value of 1 for alpha
 represents Lasso regression, a value of 0 produces Ridge regression, and anything in between specifies the
 amount of mixing between the two. Default value of alpha is 0 when SOLVER = 'L-BFGS'; 0.5 otherwise.}
+
+\item{laplace}{Laplace smoothing parameter Defaults to 0.}
+
+\item{hidden}{Hidden layer sizes (e.g. [100, 100]). Defaults to c(200, 200).}
+
+\item{l2}{L2 regularization (can add stability and improve generalization, causes many weights to be small. Defaults to
+0.}
+
+\item{hidden_dropout_ratios}{Hidden layer dropout ratios (can improve generalization), specify one value per hidden layer, defaults to 0.5.}
+
+\item{epochs}{How many times the dataset should be iterated (streamed), can be fractional. Defaults to 10.}
+
+\item{activation}{Activation function. Must be one of: "Tanh", "TanhWithDropout", "Rectifier", "RectifierWithDropout", "Maxout",
+"MaxoutWithDropout". Defaults to Rectifier.}
+
+\item{rule_generation_ntrees}{Specifies the number of trees to build in the tree model. Defaults to 50. Defaults to 50.}
+
+\item{max_rule_length}{Maximum length of rules. Defaults to 3.}
+
+\item{verbosity}{Verbosity of the backend messages printed during training;
+Must be one of NULL (live log disabled), "debug", "info", "warn", "error".
+Defaults to NULL.}
 }
 \value{
 An h2o model object.
@@ -84,7 +170,7 @@ if (h2o_running()) {
   # using parsnip:
 
   spec <-
-    rand_forest(mtry = 3, trees = 1000) \%>\%
+    rand_forest(mtry = 3, trees = 500) \%>\%
     set_engine("h2o") \%>\%
     set_mode("regression")
 
