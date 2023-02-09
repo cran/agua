@@ -46,14 +46,11 @@
 #' @examples
 #' if (h2o_running()) {
 #'   auto_fit <- auto_ml() %>%
-#'     set_engine("h2o", max_runtime_secs = 10) %>%
+#'     set_engine("h2o", max_runtime_secs = 5) %>%
 #'     set_mode("regression") %>%
 #'     fit(mpg ~ ., data = mtcars)
 #'
 #'   rank_results(auto_fit, n = 5)
-#'   collect_metrics(auto_fit, summarize = FALSE)
-#'   tidy(auto_fit)
-#'   member_weights(auto_fit)
 #' }
 #'
 #' @export
@@ -200,12 +197,6 @@ collect_metrics.H2OAutoML <- function(x,
   }
 
   res
-}
-
-#' @rdname automl-tools
-#' @export
-tidy.workflow <- function(x, ...) {
-  tidy(extract_fit_parsnip(x), ...)
 }
 
 #' @rdname automl-tools
