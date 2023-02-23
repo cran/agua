@@ -1,6 +1,6 @@
 Package: agua
 Title: 'tidymodels' Integration with 'h2o'
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: c(
     person("Max", "Kuhn", , "max@rstudio.com", role = "aut",
            comment = c(ORCID = "0000-0003-2402-136X")),
@@ -29,11 +29,11 @@ Encoding: UTF-8
 RoxygenNote: 7.2.3
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2023-02-09 18:11:04 UTC; qiushi
+Packaged: 2023-02-23 06:12:09 UTC; qiushi
 Author: Max Kuhn [aut] (<https://orcid.org/0000-0003-2402-136X>),
   Qiushi Yan [aut, cre],
   Steven Pawley [aut],
   RStudio [cph]
 Maintainer: Qiushi Yan <qiushi.yann@gmail.com>
 Repository: CRAN
-Date/Publication: 2023-02-09 18:30:02 UTC
+Date/Publication: 2023-02-23 10:30:05 UTC

@@ -159,25 +159,26 @@ Basic model wrappers for h2o model functions that include data conversion,
 seed configuration, and so on.
 }
 \examples{
+\dontshow{if (agua:::should_run_examples()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 # start with h2o::h2o.init()
-
 if (h2o_running()) {
-  # -------------------------------------------------------------------------
-  # Using the model wrappers:
-  h2o_train_glm(mtcars[, -1], mtcars$mpg)
+ # -------------------------------------------------------------------------
+ # Using the model wrappers:
+ h2o_train_glm(mtcars[, -1], mtcars$mpg)
 
-  # -------------------------------------------------------------------------
-  # using parsnip:
+ # -------------------------------------------------------------------------
+ # using parsnip:
 
-  spec <-
-    rand_forest(mtry = 3, trees = 500) \%>\%
-    set_engine("h2o") \%>\%
-    set_mode("regression")
+ spec <-
+   rand_forest(mtry = 3, trees = 500) \%>\%
+   set_engine("h2o") \%>\%
+   set_mode("regression")
 
-  set.seed(1)
-  mod <- fit(spec, mpg ~ ., data = mtcars)
-  mod
+ set.seed(1)
+ mod <- fit(spec, mpg ~ ., data = mtcars)
+ mod
 
-  predict(mod, head(mtcars))
+ predict(mod, head(mtcars))
 }
+\dontshow{\}) # examplesIf}
 }
